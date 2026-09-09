@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    :root {
+      --bg: #0a0a0c;
+      --bg-elev: #111114;
+      --surface: #1a1a1f;
+      --border: #26262e;
+      --text: #f4f4f5;
+      --text-300: #d4d4d8;
+      --text-400: #a1a1aa;
+      --text-500: #71717a;
+      --text-600: #52525b;
+      --star: #facc15;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    .page { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); min-height: 100%; }
+    a { color: var(--accent, #2563eb); text-decoration: none; }
+    a:hover { color: var(--accent-hover, #3b82f6); }
+
+    .detail-header { position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(10px); }
+    .detail-header-inner { max-width: 1320px; margin: 0 auto; padding: 14px 32px; display: flex; align-items: center; gap: 20px; }
+    .logo-text { font-size: 20px; font-weight: 900; letter-spacing: -0.02em; color: #fff; }
+    .logo-text span { color: var(--accent, #2563eb); }
+    .back-link { margin-left: auto; font-size: 14px; color: var(--text-400); display: flex; align-items: center; gap: 6px; }
+    .back-link:hover { color: #fff; }
+
+    .detail-hero { position: relative; padding-top: 40px; }
+    .detail-backdrop { position: absolute; inset: 0; height: 320px; overflow: hidden; z-index: 0; }
+    .detail-backdrop-art { position: absolute; inset: 0; background: linear-gradient(135deg, #123b46 0%, #0a1c22 60%); filter: blur(2px); opacity: 0.55; }
+    .detail-backdrop-fade { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 0%, var(--bg) 92%); }
+    .detail-hero-inner { position: relative; z-index: 1; max-width: 1320px; margin: 0 auto; padding: 0 32px; display: flex; gap: 28px; align-items: flex-end; }
+    .detail-poster { width: 176px; flex-shrink: 0; aspect-ratio: 2/3; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; background: linear-gradient(160deg, #123b46 0%, #0a1c22 70%); }
+    .detail-poster svg { width: 44px; height: 44px; opacity: 0.18; color: #fff; }
+    .detail-meta-block { padding-bottom: 6px; }
+    .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent, #2563eb); }
+    .detail-title { font-size: 38px; font-weight: 900; color: #fff; margin: 6px 0 0; letter-spacing: -0.015em; }
+    .meta-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; font-size: 14px; color: var(--text-400); }
+    .meta-item { display: flex; align-items: center; gap: 5px; }
+    .meta-dot { width: 3px; height: 3px; border-radius: 999px; background: var(--text-600); }
+    .score-pill { display: flex; align-items: center; gap: 5px; color: var(--star); font-weight: 700; }
+    .score-pill svg { width: 13px; height: 13px; }
+    .tag { font-size: 12px; font-weight: 600; color: var(--text-300); border: 1px solid var(--border); background: color-mix(in srgb, var(--surface) 70%, transparent); padding: 4px 10px; border-radius: 999px; }
+
+    .detail-main { max-width: 1320px; margin: 0 auto; padding: 36px 32px 72px; display: flex; gap: 28px; align-items: flex-start; }
+    .detail-col { flex: 1; min-width: 0; }
+
+    .player { aspect-ratio: 16/9; width: 100%; background: #000; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 25px 60px -15px rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; }
+    .player-play { width: 68px; height: 68px; border-radius: 999px; background: color-mix(in srgb, var(--accent, #2563eb) 92%, transparent); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 30px color-mix(in srgb, var(--accent, #2563eb) 45%, transparent); }
+    .player-play svg { width: 26px; height: 26px; color: #fff; margin-left: 3px; }
+
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .tab { font-size: 13px; font-weight: 600; padding: 9px 18px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-400); }
+    .tab.active { background: var(--accent, #2563eb); border-color: var(--accent, #2563eb); color: #fff; box-shadow: 0 0 20px color-mix(in srgb, var(--accent, #2563eb) 35%, transparent); }
+
+    .ad-slot { width: 100%; height: 108px; border-radius: 10px; border: 1px dashed var(--border); background: color-mix(in srgb, var(--bg-elev) 65%, transparent); display: flex; align-items: center; justify-content: center; color: var(--text-600); font-size: 12px; margin-top: 18px; }
+    .ad-slot.vertical { height: 560px; width: 280px; }
+
+    .section-heading { font-size: 16px; font-weight: 700; color: #fff; margin: 30px 0 12px; }
+    .synopsis { font-size: 14px; line-height: 1.7; color: var(--text-400); max-width: 640px; margin: 0; }
+
+    .provider-group { margin-bottom: 18px; }
+    .provider-label { font-size: 12px; color: var(--text-500); margin: 0 0 10px; }
+    .provider-row { display: flex; flex-wrap: wrap; gap: 12px; }
+    .provider-badge { width: 48px; height: 48px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; color: var(--text-500); }
+    .provider-badge:hover { border-color: var(--accent, #2563eb); color: var(--accent, #2563eb); }
+    .provider-link { font-size: 12px; margin-top: 4px; display: inline-block; }
+    .fine-print { font-size: 11px; color: var(--text-600); margin-top: 14px; }
+
+    aside.detail-side { flex-shrink: 0; }
+  </style>
+</helmet>
+
+<div class="page" style="--accent: {{accent}}; --accent-hover: {{accentHover}};">
+
+  <header class="detail-header">
+    <div class="detail-header-inner">
+      <span class="logo-text">Cine<span>Archivo</span></span>
+      <a href="#" class="back-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        Volver al catálogo
+      </a>
+    </div>
+  </header>
+
+  <section class="detail-hero">
+    <div class="detail-backdrop">
+      <div class="detail-backdrop-art"></div>
+      <div class="detail-backdrop-fade"></div>
+    </div>
+    <div class="detail-hero-inner">
+      <div class="detail-poster">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 16h4M16 8h4M16 16h4"/></svg>
+      </div>
+      <div class="detail-meta-block">
+        <span class="eyebrow">Drama</span>
+        <h1 class="detail-title">El Último Faro</h1>
+        <div class="meta-row">
+          <span class="meta-item">2024</span>
+          <span class="meta-dot"></span>
+          <span class="score-pill">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>
+            8.1
+          </span>
+          <span class="meta-dot"></span>
+          <span class="tag">Documental</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="detail-main">
+    <div class="detail-col">
+      <div class="player">
+        <div class="player-play">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <span class="tab active">Servidor 1</span>
+        <span class="tab">Servidor 2</span>
+        <span class="tab">Servidor 3</span>
+      </div>
+
+      <div class="ad-slot">Espacio publicitario reservado</div>
+
+      <h2 class="section-heading">Sinopsis</h2>
+      <p class="synopsis">Un guardafaros solitario descubre un mensaje cifrado que conecta tres décadas de naufragios en la costa atlántica. A medida que investiga, los límites entre el archivo histórico y su propia memoria familiar comienzan a desdibujarse.</p>
+
+      <h2 class="section-heading">Dónde verla legalmente</h2>
+
+      <div class="provider-group">
+        <p class="provider-label">Suscripción</p>
+        <div class="provider-row">
+          <div class="provider-badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></div>
+          <div class="provider-badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></div>
+        </div>
+      </div>
+      <div class="provider-group">
+        <p class="provider-label">Alquiler</p>
+        <div class="provider-row">
+          <div class="provider-badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></div>
+        </div>
+      </div>
+
+      <a href="#" class="provider-link">
+        Ver todas las opciones (JustWatch)
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: -1px; margin-left: 2px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      </a>
+      <p class="fine-print">Datos de disponibilidad proporcionados por JustWatch a través de TMDb.</p>
+    </div>
+
+    <aside class="detail-side">
+      <div class="ad-slot vertical">Espacio publicitario reservado</div>
+    </aside>
+  </main>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"accent":{"editor":"color","default":"#2563eb","section":"Color","options":["#2563eb","#e11d48","#16a34a","#a855f7"]},"accentHover":{"editor":"color","default":"#3b82f6","section":"Color"}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      accent: this.props.accent ?? '#2563eb',
+      accentHover: this.props.accentHover ?? '#3b82f6',
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    :root {
+      --bg: #0a0a0c;
+      --bg-elev: #111114;
+      --surface: #1a1a1f;
+      --border: #26262e;
+      --text: #f4f4f5;
+      --text-300: #d4d4d8;
+      --text-400: #a1a1aa;
+      --text-500: #71717a;
+      --text-600: #52525b;
+      --star: #facc15;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    .page {
+      font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100%;
+    }
+    a { color: var(--accent, #2563eb); text-decoration: none; }
+    a:hover { color: var(--accent-hover, #3b82f6); }
+
+    /* Navbar */
+    .navbar {
+      position: sticky; top: 0; z-index: 50;
+      background: color-mix(in srgb, var(--bg) 90%, transparent);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .navbar-inner {
+      max-width: 1320px; margin: 0 auto; padding: 14px 32px;
+      display: flex; align-items: center; gap: 32px;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .logo-mark {
+      width: 30px; height: 30px; border-radius: 8px;
+      background: color-mix(in srgb, var(--accent, #2563eb) 18%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent, #2563eb) 45%, transparent);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-text { font-size: 20px; font-weight: 900; letter-spacing: -0.02em; color: #fff; }
+    .logo-text span { color: var(--accent, #2563eb); }
+    .nav-links { display: flex; align-items: center; gap: 28px; font-size: 14px; color: var(--text-400); }
+    .nav-link { position: relative; padding-bottom: 4px; color: var(--text-400); }
+    .nav-link.active { color: #fff; font-weight: 600; }
+    .nav-link.active::after {
+      content: ""; position: absolute; left: 0; right: 0; bottom: -14px; height: 2px;
+      background: var(--accent, #2563eb);
+    }
+    .search { position: relative; width: 100%; max-width: 320px; margin-left: auto; }
+    .search svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--text-500); }
+    .search input {
+      width: 100%; height: 40px; border-radius: 999px;
+      background: color-mix(in srgb, var(--surface) 85%, transparent);
+      border: 1px solid var(--border);
+      color: var(--text); font-size: 14px;
+      padding: 0 16px 0 38px; outline: none;
+    }
+    .search input::placeholder { color: var(--text-500); }
+
+    /* Hero */
+    .hero { position: relative; height: 620px; overflow: hidden; }
+    .hero-media {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 900px 500px at 78% 20%, color-mix(in srgb, var(--accent, #2563eb) 22%, transparent), transparent 60%),
+        linear-gradient(135deg, #16213a 0%, #0e1524 45%, #0a0a0c 100%);
+    }
+    .hero-media::after {
+      content: ""; position: absolute; inset: 0;
+      background-image: repeating-linear-gradient(115deg, rgba(255,255,255,0.025) 0 2px, transparent 2px 5px);
+    }
+    .hero-fade-b { position: absolute; inset: 0; background: linear-gradient(to top, var(--bg) 5%, color-mix(in srgb, var(--bg) 35%, transparent) 45%, transparent 75%); }
+    .hero-fade-l { position: absolute; inset: 0; background: linear-gradient(to right, var(--bg) 5%, color-mix(in srgb, var(--bg) 55%, transparent) 35%, transparent 65%); }
+    .hero-content { position: relative; z-index: 2; height: 100%; max-width: 1320px; margin: 0 auto; padding: 0 32px 56px; display: flex; flex-direction: column; justify-content: flex-end; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px; width: fit-content;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent, #2563eb);
+      border: 1px solid color-mix(in srgb, var(--accent, #2563eb) 45%, transparent);
+      background: color-mix(in srgb, var(--accent, #2563eb) 12%, transparent);
+      padding: 6px 12px; border-radius: 999px; margin-bottom: 18px;
+    }
+    .hero-title { font-size: 58px; font-weight: 900; line-height: 1.04; letter-spacing: -0.02em; color: #fff; max-width: 640px; margin: 0; }
+    .meta-row { display: flex; align-items: center; gap: 14px; margin-top: 18px; font-size: 14px; color: var(--text-300); }
+    .meta-item { display: flex; align-items: center; gap: 5px; }
+    .meta-dot { width: 3px; height: 3px; border-radius: 999px; background: var(--text-600); }
+    .tag {
+      font-size: 12px; font-weight: 600; color: var(--text-300);
+      border: 1px solid var(--border); background: color-mix(in srgb, var(--surface) 70%, transparent);
+      padding: 4px 10px; border-radius: 999px;
+    }
+    .hero-synopsis { margin: 20px 0 0; max-width: 560px; font-size: 15px; line-height: 1.6; color: var(--text-300); }
+    .hero-actions { display: flex; gap: 12px; margin-top: 28px; }
+    .btn { display: inline-flex; align-items: center; gap: 9px; font-size: 15px; font-weight: 700; padding: 13px 26px; border-radius: 8px; border: 1px solid transparent; }
+    .btn-primary {
+      background: var(--accent, #2563eb); color: #fff;
+      box-shadow: 0 0 25px color-mix(in srgb, var(--accent, #2563eb) 35%, transparent);
+    }
+    .btn-primary:hover { background: var(--accent-hover, #3b82f6); }
+    .btn-secondary { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.16); color: #fff; }
+    .btn-secondary:hover { background: rgba(255,255,255,0.14); }
+
+    /* Genre dropdown (navbar) */
+    .nav-genre { position: relative; }
+    .nav-genre-trigger { display: flex; align-items: center; gap: 5px; background: none; border: none; font: inherit; cursor: pointer; padding: 0; color: var(--text-400); }
+    .nav-genre-trigger:hover { color: #fff; }
+    .nav-genre-trigger svg { width: 12px; height: 12px; transition: transform .18s ease; }
+    .nav-genre:hover .nav-genre-trigger svg { transform: rotate(180deg); }
+    .genre-dropdown {
+      position: absolute; top: calc(100% + 18px); left: -14px; z-index: 60; min-width: 340px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.65);
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px;
+      opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity .18s ease, transform .18s ease, visibility .18s;
+    }
+    .nav-genre:hover .genre-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+    .genre-item { padding: 10px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-300); }
+    .genre-item:hover { background: color-mix(in srgb, var(--accent, #2563eb) 16%, transparent); color: #fff; }
+
+    /* Content */
+    .content { max-width: 1320px; margin: 0 auto; padding: 44px 32px 0; }
+    .row { margin-bottom: 44px; }
+    .row-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 18px; }
+    .row-title { font-size: 21px; font-weight: 800; color: #fff; margin: 0; letter-spacing: -0.01em; }
+    .see-all { font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+
+    .row-scroll-wrap { position: relative; }
+    .row-scroll-wrap::before, .row-scroll-wrap::after {
+      content: ""; position: absolute; top: 0; bottom: 22px; width: 48px; z-index: 3; pointer-events: none;
+    }
+    .row-scroll-wrap::before { left: -32px; background: linear-gradient(to right, var(--bg), transparent); }
+    .row-scroll-wrap::after { right: -32px; background: linear-gradient(to left, var(--bg), transparent); }
+    .row-scroll {
+      display: flex; gap: 18px; overflow-x: auto; padding-bottom: 22px; margin: 0 -32px; padding-left: 32px; padding-right: 32px;
+    }
+    .card { flex-shrink: 0; width: 196px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); overflow: hidden; transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
+    .card:hover { transform: scale(1.06); border-color: var(--accent, #2563eb); box-shadow: 0 20px 44px -12px color-mix(in srgb, var(--accent, #2563eb) 55%, transparent); z-index: 5; position: relative; }
+    .poster { position: relative; aspect-ratio: 2 / 3; overflow: hidden; }
+    .poster-art { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 46px rgba(0,0,0,0.45); }
+    .poster-art svg { opacity: 0.16; width: 46px; height: 46px; }
+    .p1 { background: linear-gradient(160deg, #123b46 0%, #0a1c22 70%); }
+    .p2 { background: linear-gradient(160deg, #3a2536 0%, #1a1119 70%); }
+    .p3 { background: linear-gradient(160deg, #4a3418 0%, #1f160a 70%); }
+    .p4 { background: linear-gradient(160deg, #262e52 0%, #12152a 70%); }
+    .p5 { background: linear-gradient(160deg, #2c3a22 0%, #141c0f 70%); }
+    .p6 { background: linear-gradient(160deg, #38303a 0%, #17131a 70%); }
+    .score-badge {
+      position: absolute; top: 9px; right: 9px; display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(0,0,0,0.72); backdrop-filter: blur(4px); color: var(--star);
+      font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 999px;
+    }
+    .score-badge svg { width: 11px; height: 11px; }
+    .play-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity .25s ease, background .25s ease; }
+    .card:hover .play-overlay { opacity: 1; background: rgba(0,0,0,0.45); }
+    .play-circle {
+      width: 52px; height: 52px; border-radius: 999px;
+      background: color-mix(in srgb, var(--accent, #2563eb) 92%, transparent);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 25px color-mix(in srgb, var(--accent, #2563eb) 45%, transparent);
+    }
+    .play-circle svg { width: 20px; height: 20px; color: #fff; margin-left: 2px; }
+    .card-body { padding: 12px 13px 14px; }
+    .card-title { font-size: 14px; font-weight: 600; color: #fff; margin: 0 0 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-sub { font-size: 12px; color: var(--text-500); margin: 0; }
+
+    /* Footer */
+    .footer { border-top: 1px solid var(--border); background: color-mix(in srgb, var(--bg-elev) 60%, transparent); margin-top: 24px; }
+    .footer-grid { max-width: 1320px; margin: 0 auto; padding: 56px 32px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 40px; }
+    .footer-brand p { margin-top: 14px; font-size: 13px; line-height: 1.6; color: var(--text-500); max-width: 260px; }
+    .footer-heading { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-400); margin: 0 0 16px; }
+    .footer-links { display: flex; flex-direction: column; gap: 11px; list-style: none; margin: 0; padding: 0; }
+    .footer-links a { font-size: 13px; color: var(--text-500); }
+    .footer-links a:hover { color: var(--accent, #2563eb); }
+    .footer-note { font-size: 12px; color: var(--text-600); line-height: 1.6; }
+    .footer-bottom { border-top: 1px solid var(--border); padding: 22px 32px; text-align: center; font-size: 12px; color: var(--text-600); }
+  </style>
+</helmet>
+
+<div class="page" style="--accent: {{accent}}; --accent-hover: {{accentHover}};">
+
+  <header class="navbar">
+    <div class="navbar-inner">
+      <div class="logo">
+        <span class="logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" width="16" height="16"><path d="M8 5v14l11-7z" fill="{{accent}}" stroke="none"/></svg>
+        </span>
+        <span class="logo-text">Cine<span>Archivo</span></span>
+      </div>
+      <nav class="nav-links">
+        <span class="nav-link active">Inicio</span>
+        <span class="nav-link">Documentales</span>
+        <span class="nav-link">Archivo</span>
+        <div class="nav-genre">
+          <button class="nav-genre-trigger">
+            Géneros
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="genre-dropdown">
+            <span class="genre-item">Acción</span>
+            <span class="genre-item">Aventura</span>
+            <span class="genre-item">Animación</span>
+            <span class="genre-item">Comedia</span>
+            <span class="genre-item">Documental</span>
+            <span class="genre-item">Drama</span>
+            <span class="genre-item">Familiar</span>
+            <span class="genre-item">Misterio</span>
+            <span class="genre-item">Romance</span>
+            <span class="genre-item">Suspense</span>
+            <span class="genre-item">Terror</span>
+            <span class="genre-item">Ciencia ficción</span>
+          </div>
+        </div>
+      </nav>
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/></svg>
+        <input type="text" placeholder="Buscar títulos..." />
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-media"></div>
+    <div class="hero-fade-b"></div>
+    <div class="hero-fade-l"></div>
+    <div class="hero-content">
+      <span class="badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h6l-1 8 11-14h-7z"/></svg>
+        En tendencia
+      </span>
+      <h1 class="hero-title">El Último Faro</h1>
+      <div class="meta-row">
+        <span class="meta-item" style="color:var(--star); font-weight:700;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>
+          8.1
+        </span>
+        <span class="meta-dot"></span>
+        <span class="meta-item">2024</span>
+        <span class="meta-dot"></span>
+        <span class="tag">Drama</span>
+      </div>
+      <p class="hero-synopsis">Un guardafaros solitario descubre un mensaje cifrado que conecta tres décadas de naufragios en la costa atlántica.</p>
+      <div class="hero-actions">
+        <a href="#" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          Ver ahora
+        </a>
+        <a href="#" class="btn btn-secondary">Más información</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="content">
+
+    <section class="row">
+      <div class="row-header">
+        <h2 class="row-title">Tendencias</h2>
+        <a href="#" class="see-all">Ver todo
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <div class="row-scroll-wrap">
+        <div class="row-scroll">
+
+          <div class="card">
+            <div class="poster">
+              <div class="poster-art p1"><svg viewBox="0 0 24 24" fill="currentColor" color="#fff"><path d="M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 16h4M16 8h4M16 16h4"/></svg></div>
+              <div class="score-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>8.1</div>
+              <div class="play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div></div>
+            </div>
+            <div class="card-body"><p class="card-title">El Último Faro</p><p class="card-sub">2024</p></div>
+          </div>
+
+          <div class="card">
+            <div class="poster">
+              <div class="poster-art p2"><svg viewBox="0 0 24 24" fill="currentColor" color="#fff"><path d="M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 16h4M16 8h4M16 16h4"/></svg></div>
+              <div class="score-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>7.4</div>
+              <div class="play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div></div>
+            </div>
+            <div class="card-body"><p class="card-title">Nación de Cristal</p><p class="card-sub">2023</p></div>
+          </div>
+
+          <div class="card">
+            <div class="poster">
+              <div class="poster-art p3"><svg viewBox="0 0 24 24" fill="currentColor" color="#fff"><path d="M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 16h4M16 8h4M16 16h4"/></svg></div>
+              <div class="score-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>7.9</div>
+              <div class="play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div></div>
+            </div>
+            <div class="card-body"><p class="card-title">Voces del Atlántico</p><p class="card-sub">2024</p></div>
+          </div>
+
+          <div class="card">
+            <div class="poster">
+              <div class="poster-art p4"><svg viewBox="0 0 24 24" fill="currentColor" color="#fff"><path d="M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 16h4M16 8h4M16 16h4"/></svg></div>
+              <div class="score-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>6.8</div>
+              <div class="play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div></div>
+            </div>
+            <div class="card-body"><p class="card-title">Sombra Perpetua</p><p class="card-sub">2022</p></div>
+          </div>
+
+          <div class="card">
+            <div class="poster">
+              <div class="poster-art p5"><svg viewBox="0 0 24 24" fill="currentColor" color="#fff"><path d="M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 16h4M16 8h4M16 16h4"/></svg></div>
+              <div class="score-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>8.3</div>
+              <div class="play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div></div>
+            </div>
+            <div class="card-body"><p class="card-title">Raíces de Hierro</p><p class="card-sub">2023</p></div>
+          </div>
+
+          <div class="card">
+            <div class="poster">
+              <div class="poster-art p6"><svg viewBox="0 0 24 24" fill="currentColor" color="#fff"><path d="M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 16h4M16 8h4M16 16h4"/></svg></div>
+              <div class="score-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>7.2</div>
+              <div class="play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div></div>
+            </div>
+            <div class="card-body"><p class="card-title">El Círculo Rojo</p><p class="card-sub">2024</p></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="row">
+      <div class="row-header">
+        <h2 class="row-title">Documentales</h2>
+        <a href="#" class="see-all">Ver todo
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <div class="row-scroll-wrap">
+        <div class="row-scroll">
+
+          <div class="card">
+            <div class="poster">
+              <div class="poster-art p4"><svg viewBox="0 0 24 24" fill="currentColor" color="#fff"><path d="M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 16h4M16 8h4M16 16h4"/></svg></div>
+              <div class="score-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>7.9</div>
+              <div class="play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div></div>
+            </div>
+            <div class="card-body"><p class="card-title">Voces del Atlántico</p><p class="card-sub">2024</p></div>
+          </div>
+
+          <div class="card">
+            <div class="poster">
+              <div class="poster-art p1"><svg viewBox="0 0 24 24" fill="currentColor" color="#fff"><path d="M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 16h4M16 8h4M16 16h4"/></svg></div>
+              <div class="score-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>7.4</div>
+              <div class="play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div></div>
+            </div>
+            <div class="card-body"><p class="card-title">Nación de Cristal</p><p class="card-sub">2023</p></div>
+          </div>
+
+          <div class="card">
+            <div class="poster">
+              <div class="poster-art p5"><svg viewBox="0 0 24 24" fill="currentColor" color="#fff"><path d="M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 16h4M16 8h4M16 16h4"/></svg></div>
+              <div class="score-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>8.5</div>
+              <div class="play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div></div>
+            </div>
+            <div class="card-body"><p class="card-title">Tierra de Nadie</p><p class="card-sub">2021</p></div>
+          </div>
+
+          <div class="card">
+            <div class="poster">
+              <div class="poster-art p3"><svg viewBox="0 0 24 24" fill="currentColor" color="#fff"><path d="M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 16h4M16 8h4M16 16h4"/></svg></div>
+              <div class="score-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>7.0</div>
+              <div class="play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div></div>
+            </div>
+            <div class="card-body"><p class="card-title">Archivo 1979</p><p class="card-sub">2020</p></div>
+          </div>
+
+          <div class="card">
+            <div class="poster">
+              <div class="poster-art p6"><svg viewBox="0 0 24 24" fill="currentColor" color="#fff"><path d="M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 16h4M16 8h4M16 16h4"/></svg></div>
+              <div class="score-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>7.6</div>
+              <div class="play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div></div>
+            </div>
+            <div class="card-body"><p class="card-title">Silencio de Fábrica</p><p class="card-sub">2022</p></div>
+          </div>
+
+          <div class="card">
+            <div class="poster">
+              <div class="poster-art p2"><svg viewBox="0 0 24 24" fill="currentColor" color="#fff"><path d="M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 16h4M16 8h4M16 16h4"/></svg></div>
+              <div class="score-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>8.0</div>
+              <div class="play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div></div>
+            </div>
+            <div class="card-body"><p class="card-title">El Peso del Silencio</p><p class="card-sub">2025</p></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="logo-text" style="font-size:17px;">Cine<span>Archivo</span></span>
+        <p>Catálogo de tráilers oficiales, documentales de dominio público y material de archivo independiente.</p>
+      </div>
+      <div>
+        <p class="footer-heading">Legal</p>
+        <ul class="footer-links">
+          <li><a href="#">Aviso Legal</a></li>
+          <li><a href="#">Política de Privacidad</a></li>
+          <li><a href="#">Términos de Uso</a></li>
+          <li><a href="#">Licencias de Contenido</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-heading">Soporte</p>
+        <ul class="footer-links">
+          <li><a href="#">Contacto</a></li>
+          <li><a href="#">Preguntas Frecuentes</a></li>
+          <li><a href="#">Reportar un Problema</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-heading">Derechos de Autor</p>
+        <ul class="footer-links">
+          <li><a href="#">Remoción DMCA</a></li>
+          <li class="footer-note">Todo el contenido mostrado es de dominio público o bajo licencia Creative Commons.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 CineArchivo. Todos los derechos reservados.</div>
+  </footer>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"accent":{"editor":"color","default":"#2563eb","section":"Color","options":["#2563eb","#e11d48","#16a34a","#a855f7"]},"accentHover":{"editor":"color","default":"#3b82f6","section":"Color"}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      accent: this.props.accent ?? '#2563eb',
+      accentHover: this.props.accentHover ?? '#3b82f6',
+    };
+  }
+}
+</script>
+</body>
+</html>

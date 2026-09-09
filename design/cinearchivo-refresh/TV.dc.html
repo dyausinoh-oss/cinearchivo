@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    :root {
+      --bg: #0a0a0c; --bg-elev: #111114; --surface: #1a1a1f; --border: #26262e;
+      --text: #f4f4f5; --text-300: #d4d4d8; --text-400: #a1a1aa; --text-500: #71717a; --text-600: #52525b;
+      --star: #facc15;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    .page {
+      font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg); color: var(--text);
+      height: 100vh; width: 100%; overflow: hidden;
+      display: flex; flex-direction: column;
+      padding: 40px 72px;
+    }
+    a { color: var(--accent, #2563eb); text-decoration: none; }
+
+    .navbar { display: flex; align-items: center; gap: 40px; flex-shrink: 0; }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-mark { width: 34px; height: 34px; border-radius: 9px; background: color-mix(in srgb, var(--accent, #2563eb) 18%, transparent); border: 1px solid color-mix(in srgb, var(--accent, #2563eb) 45%, transparent); display: flex; align-items: center; justify-content: center; }
+    .logo-text { font-size: 24px; font-weight: 900; letter-spacing: -0.02em; color: #fff; }
+    .logo-text span { color: var(--accent, #2563eb); }
+    .nav-links { display: flex; align-items: center; gap: 32px; font-size: 17px; color: var(--text-400); }
+    .nav-link { color: var(--text-400); }
+    .nav-link.active { color: #fff; font-weight: 700; }
+    .nav-genre { display: flex; align-items: center; gap: 6px; color: var(--text-400); }
+    .nav-genre svg { width: 14px; height: 14px; }
+    .search { position: relative; width: 300px; margin-left: auto; }
+    .search svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-500); width: 18px; height: 18px; }
+    .search input { width: 100%; height: 48px; border-radius: 999px; background: color-mix(in srgb, var(--surface) 85%, transparent); border: 1px solid var(--border); color: var(--text); font-size: 16px; padding: 0 18px 0 46px; outline: none; }
+    .search input::placeholder { color: var(--text-500); }
+
+    .hero { position: relative; flex-shrink: 0; height: 360px; margin-top: 32px; border-radius: 16px; overflow: hidden; }
+    .hero-media { position: absolute; inset: 0; background: radial-gradient(ellipse 700px 400px at 75% 20%, color-mix(in srgb, var(--accent, #2563eb) 22%, transparent), transparent 60%), linear-gradient(135deg, #16213a 0%, #0e1524 45%, #0a0a0c 100%); }
+    .hero-fade-l { position: absolute; inset: 0; background: linear-gradient(to right, var(--bg) 8%, color-mix(in srgb, var(--bg) 45%, transparent) 40%, transparent 68%); }
+    .hero-content { position: relative; z-index: 2; height: 100%; padding: 0 44px; display: flex; flex-direction: column; justify-content: center; max-width: 780px; }
+    .badge { display: inline-flex; align-items: center; gap: 7px; width: fit-content; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent, #2563eb); border: 1px solid color-mix(in srgb, var(--accent, #2563eb) 45%, transparent); background: color-mix(in srgb, var(--accent, #2563eb) 12%, transparent); padding: 7px 14px; border-radius: 999px; margin-bottom: 16px; }
+    .hero-title { font-size: 52px; font-weight: 900; line-height: 1.05; letter-spacing: -0.02em; color: #fff; margin: 0; }
+    .meta-row { display: flex; align-items: center; gap: 16px; margin-top: 16px; font-size: 17px; color: var(--text-300); }
+    .meta-item { display: flex; align-items: center; gap: 6px; }
+    .meta-item svg { width: 16px; height: 16px; }
+    .meta-dot { width: 4px; height: 4px; border-radius: 999px; background: var(--text-600); }
+    .tag { font-size: 14px; font-weight: 600; color: var(--text-300); border: 1px solid var(--border); background: color-mix(in srgb, var(--surface) 70%, transparent); padding: 5px 12px; border-radius: 999px; }
+    .hero-actions { display: flex; gap: 16px; margin-top: 26px; }
+    .btn { display: inline-flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; padding: 16px 32px; border-radius: 10px; border: 1px solid transparent; }
+    .btn-primary { background: var(--accent, #2563eb); color: #fff; box-shadow: 0 0 28px color-mix(in srgb, var(--accent, #2563eb) 40%, transparent); }
+    .btn-secondary { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.18); color: #fff; }
+
+    .rows { flex: 1; min-height: 0; margin-top: 32px; display: flex; flex-direction: column; }
+    .row-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 18px; flex-shrink: 0; }
+    .row-title { font-size: 24px; font-weight: 800; color: #fff; margin: 0; letter-spacing: -0.01em; }
+    .see-all { font-size: 15px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
+    .row-scroll { flex: 1; min-height: 0; display: flex; gap: 22px; overflow: hidden; }
+    .card { flex: 1; max-width: 240px; border-radius: 14px; background: var(--surface); border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; }
+    .poster { position: relative; flex: 1; min-height: 0; overflow: hidden; }
+    .poster-art { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 50px rgba(0,0,0,0.45); }
+    .poster-art svg { opacity: 0.16; width: 52px; height: 52px; color: #fff; }
+    .p1 { background: linear-gradient(160deg, #123b46 0%, #0a1c22 70%); }
+    .p2 { background: linear-gradient(160deg, #3a2536 0%, #1a1119 70%); }
+    .p3 { background: linear-gradient(160deg, #4a3418 0%, #1f160a 70%); }
+    .p4 { background: linear-gradient(160deg, #262e52 0%, #12152a 70%); }
+    .p5 { background: linear-gradient(160deg, #2c3a22 0%, #141c0f 70%); }
+    .score-badge { position: absolute; top: 12px; right: 12px; display: inline-flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.72); color: var(--star); font-size: 14px; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
+    .score-badge svg { width: 13px; height: 13px; }
+    .card-body { padding: 14px 16px 16px; flex-shrink: 0; }
+    .card-title { font-size: 16px; font-weight: 600; color: #fff; margin: 0 0 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-sub { font-size: 13px; color: var(--text-500); margin: 0; }
+  </style>
+</helmet>
+
+<div class="page" style="--accent: {{accent}}; --accent-hover: {{accentHover}};">
+
+  <nav class="navbar">
+    <div class="logo">
+      <span class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" width="18" height="18"><path d="M8 5v14l11-7z" fill="{{accent}}" stroke="none"/></svg>
+      </span>
+      <span class="logo-text">Cine<span>Archivo</span></span>
+    </div>
+    <div class="nav-links">
+      <span class="nav-link active">Inicio</span>
+      <span class="nav-link">Documentales</span>
+      <span class="nav-link">Archivo</span>
+      <span class="nav-genre">
+        Géneros
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
+      </span>
+    </div>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/></svg>
+      <input type="text" placeholder="Buscar títulos..." />
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-media"></div>
+    <div class="hero-fade-l"></div>
+    <div class="hero-content">
+      <span class="badge">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h6l-1 8 11-14h-7z"/></svg>
+        En tendencia
+      </span>
+      <h1 class="hero-title">El Último Faro</h1>
+      <div class="meta-row">
+        <span class="meta-item" style="color:var(--star); font-weight:700;">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>
+          8.1
+        </span>
+        <span class="meta-dot"></span>
+        <span class="meta-item">2024</span>
+        <span class="meta-dot"></span>
+        <span class="tag">Drama</span>
+      </div>
+      <div class="hero-actions">
+        <a href="#" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          Ver ahora
+        </a>
+        <a href="#" class="btn btn-secondary">Más información</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="rows">
+    <div class="row-header">
+      <h2 class="row-title">Tendencias</h2>
+      <a href="#" class="see-all">Ver todo
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+    <div class="row-scroll">
+      <div class="card">
+        <div class="poster">
+          <div class="poster-art p1"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 16h4M16 8h4M16 16h4"/></svg></div>
+          <div class="score-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>8.1</div>
+        </div>
+        <div class="card-body"><p class="card-title">El Último Faro</p><p class="card-sub">2024</p></div>
+      </div>
+      <div class="card">
+        <div class="poster">
+          <div class="poster-art p2"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 16h4M16 8h4M16 16h4"/></svg></div>
+          <div class="score-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>7.4</div>
+        </div>
+        <div class="card-body"><p class="card-title">Nación de Cristal</p><p class="card-sub">2023</p></div>
+      </div>
+      <div class="card">
+        <div class="poster">
+          <div class="poster-art p3"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 16h4M16 8h4M16 16h4"/></svg></div>
+          <div class="score-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>7.9</div>
+        </div>
+        <div class="card-body"><p class="card-title">Voces del Atlántico</p><p class="card-sub">2024</p></div>
+      </div>
+      <div class="card">
+        <div class="poster">
+          <div class="poster-art p4"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 16h4M16 8h4M16 16h4"/></svg></div>
+          <div class="score-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>6.8</div>
+        </div>
+        <div class="card-body"><p class="card-title">Sombra Perpetua</p><p class="card-sub">2022</p></div>
+      </div>
+      <div class="card">
+        <div class="poster">
+          <div class="poster-art p5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 16h4M16 8h4M16 16h4"/></svg></div>
+          <div class="score-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.8L5.8 21l1.6-7-5.4-4.8 7.1-.7z"/></svg>8.3</div>
+        </div>
+        <div class="card-body"><p class="card-title">Raíces de Hierro</p><p class="card-sub">2023</p></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"accent":{"editor":"color","default":"#2563eb","section":"Color","options":["#2563eb","#e11d48","#16a34a","#a855f7"]},"accentHover":{"editor":"color","default":"#3b82f6","section":"Color"}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      accent: this.props.accent ?? '#2563eb',
+      accentHover: this.props.accentHover ?? '#3b82f6',
+    };
+  }
+}
+</script>
+</body>
+</html>
